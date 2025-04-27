@@ -1,0 +1,6 @@
+{
+  "appId": "aastra.app",
+  "appName": "Aastra",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
