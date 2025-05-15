@@ -2,18 +2,23 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne, ManyToOne 
 import { Comments } from '../comments/comment.entity'; // Adjust the path to your Comment entity
 import { User } from 'src/users/user.entity';
 
-@Entity('opinions')
-export class Opinion {
+@Entity('roster')
+export class Roster {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ nullable: false })
-  title: string;
+  otherguysname: string;
 
   @OneToMany(() => Comments, (comment) => comment.opinion)
   comments: Comments[];
 
   // Reference to the User entity
-  @ManyToOne(() => User, (user) => user.opinions, { nullable: false, onDelete: 'CASCADE' })
-  user: User;
+  @ManyToOne(() => User, (user) => user.rosters, { nullable: false, onDelete: 'CASCADE' })
+  user1: User;
+
+  // Reference to the User entity
+  @ManyToOne(() => User, (user) => user.rosters, { nullable: false, onDelete: 'CASCADE' })
+  user2: User;
+  
 }

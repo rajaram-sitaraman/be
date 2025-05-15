@@ -12,9 +12,4 @@ export class AppController {
     private readonly authService: AuthService
   ) { }
   
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
 }

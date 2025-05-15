@@ -1,6 +1,6 @@
 import { Get, Inject, Injectable } from '@nestjs/common';
 import { Nothing } from 'src/auth/setPublicAccess';
-import { Repository } from 'typeorm';
+import { Like, Not, Repository } from 'typeorm';
 import { User } from './user.entity';
 
 // Define a type that excludes the 'otp' property from User
@@ -41,8 +41,9 @@ export class UsersService {
     return this.userRepository.update(id, { otp });
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userRepository.find();
+  async findAll(q, user: User): Promise<User[]> {
+    if (q) return this.userRepository.find({ where: { name: Like(`%${q}%`), id: Not(user.id) } });
+    return [];
   }
 
   async findOne(phone: string): Promise<User | null> {

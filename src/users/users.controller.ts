@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, Post, Req, Request, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Post, Query, Req, Request, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Nothing } from 'src/auth/setPublicAccess';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -38,7 +38,7 @@ export class UsersController {
     return await this.userService.create(phone, deviceId);
   }
 
-  
+
   @UseGuards(JwtAuthGuard)
   @Post('setprofile')
   async updateUser(@Request() req) {
@@ -47,10 +47,31 @@ export class UsersController {
     return await this.userService.update(req.user.id, nickname, dob);
   }
 
-  @Get()
-  @Nothing()
-  async getAllUsers() {
-    return await this.userService.findAll();
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  async getProfile(@Request() req) {
+    return await this.userService.findOne(req.user.phone);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getAllUsers(@Query('q') q: string, @Request() req) {
+    console.log('getAllUsers', q);
+
+    if (!q || typeof q !== 'string') {
+      throw new BadRequestException('Go away!');
+    }
+
+    const query: { name: string } = JSON.parse(q);
+
+    if (!query || typeof query.name !== 'string' || !/^[a-zA-Z0-9\s]+$/.test(query.name)) {
+      throw new BadRequestException('Please Go away!');
+    }
+
+    if (query.name.length < 3) {
+      throw new BadRequestException('must be at least 3 characters long');
+    }
+
+    return await this.userService.findAll(query.name, req.user);
+  }
 }

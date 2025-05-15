@@ -8,6 +8,7 @@ import { jwtConstants } from './constants';
 import { AuthController } from './auth.controller';
 import { LocalAuthGuard } from './local-auth.guards';
 import { JwtModule } from '@nestjs/jwt';
+import { WebSocketAuthMiddleware } from 'src/gateways/messages/socket-auth.middleware';
 
 @Module({
   imports: [
@@ -15,11 +16,11 @@ import { JwtModule } from '@nestjs/jwt';
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '3600s' },
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, LocalAuthGuard],
-  exports: [AuthService],
+  providers: [AuthService, LocalStrategy, JwtStrategy, LocalAuthGuard, WebSocketAuthMiddleware],
+  exports: [AuthService, JwtModule],
   controllers: [AuthController]
 })
 export class AuthModule {}
